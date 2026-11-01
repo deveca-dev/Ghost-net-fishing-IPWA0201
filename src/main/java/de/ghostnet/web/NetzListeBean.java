@@ -99,4 +99,15 @@ public class NetzListeBean implements Serializable {
             return bezeichnung;
         }
     }
+
+    public List<Geisternetz> getKartenNetze() {
+        return getGeisternetze().stream()
+                .filter(netz ->
+                        netz.getStatus() == NetStatus.GEMELDET
+                        || netz.getStatus() == NetStatus.BERGUNG_BEVORSTEHEND)
+                .filter(netz ->
+                        netz.getBreitengrad() != null
+                        && netz.getLaengengrad() != null)
+                .toList();
+    }
 }

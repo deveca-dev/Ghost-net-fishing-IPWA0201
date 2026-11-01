@@ -27,29 +27,64 @@ public class PersonService {
         return personRepository.anhandIdLaden(id);
     }
 
-    public Person anlegen(String benutzername) {
+    public Person kontaktdatenAktualisieren(
+            Long personId,
+            String name,
+            String telefon) {
+
+        if (personId == null) {
+            throw new IllegalArgumentException(
+                    "Bitte zuerst eine Person auswählen.");
+        }
+
+        EntityTransaction transaktion = entityManager.getTransaction();
+
+        try {
+            transaktion.begin();
+
+            Person person = personRepository.anhandIdLaden(personId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Die ausgewählte Person wurde nicht gefunden."));
+
+            person.kontaktdatenSetzen(name, telefon);
+
+            transaktion.commit();
+            return person;
+
+        } catch (RuntimeException fehler) {
+            if (transaktion.isActive()) {
+                transaktion.rollback();
+            }
+
+            throw fehler;
+        }
+    }
+
+    public Person anlegen(
+            String benutzername,
+            String kontaktname,
+            String telefon) {
+
         if (benutzername == null || benutzername.isBlank()) {
             throw new IllegalArgumentException(
-                    "Bitte einen Benutzernamen eingeben."
-            );
+                    "Bitte einen Benutzernamen eingeben.");
         }
 
         String name = benutzername.trim();
 
         if (name.length() > 50) {
             throw new IllegalArgumentException(
-                    "Der Benutzername darf höchstens 50 Zeichen lang sein."
-            );
+                    "Der Benutzername darf höchstens 50 Zeichen lang sein.");
         }
 
         Person person = new Person(name);
+        person.kontaktdatenSetzen(kontaktname, telefon);
+
         EntityTransaction transaktion = entityManager.getTransaction();
 
         try {
             transaktion.begin();
-
             personRepository.speichern(person);
-
             transaktion.commit();
 
             return person;

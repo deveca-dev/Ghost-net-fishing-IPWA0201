@@ -21,8 +21,7 @@ import jakarta.inject.Named;
 public class NetzBearbeitungBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final String NICHT_GESPEICHERT =
-            "Es wurde nichts gespeichert, weil der Geisternetz-Service noch nicht angebunden ist.";
+    private static final String NICHT_GESPEICHERT = "Es wurde nichts gespeichert, weil der Geisternetz-Service noch nicht angebunden ist.";
 
     private static final DateTimeFormatter ZEITPUNKT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
             .withLocale(Locale.GERMANY)
@@ -60,40 +59,39 @@ public class NetzBearbeitungBean implements Serializable {
     public String netzMelden() {
         fehlermeldung = null;
         hinweismeldung = null;
-    
+
         if (!positionsdatenGueltig()) {
             return null;
         }
-    
+
         Long meldendePersonId = null;
-    
+
         if (!anonymMelden && !userContext.isAnonym()) {
             meldendePersonId = userContext.getPersonId();
         }
-    
+
         try {
             netzService.melden(
                     breitengrad,
                     laengengrad,
                     geschaetzteGroesse,
                     beschreibung,
-                    meldendePersonId
-            );
-    
+                    meldendePersonId);
+
             hinweismeldung = "Das Geisternetz wurde erfolgreich gemeldet.";
-    
+
             breitengrad = null;
             laengengrad = null;
             geschaetzteGroesse = null;
             beschreibung = null;
             anonymMelden = false;
-    
+
             return null;
-    
+
         } catch (IllegalArgumentException fehler) {
             fehlermeldung = fehler.getMessage();
             return null;
-    
+
         } catch (jakarta.persistence.PersistenceException fehler) {
             fehlermeldung = "Das Geisternetz konnte nicht gespeichert werden.";
             return null;
@@ -103,35 +101,32 @@ public class NetzBearbeitungBean implements Serializable {
     public String bergungUebernehmen() {
         fehlermeldung = null;
         hinweismeldung = null;
-    
+
         if (ausgewaehltesNetz == null) {
             fehlermeldung = "Es ist kein Netz ausgewählt.";
             return null;
         }
-    
+
         if (userContext.isAnonym()) {
-            fehlermeldung =
-                    "Bitte zuerst einen Benutzernamen auswählen.";
+            fehlermeldung = "Bitte zuerst einen Benutzernamen auswählen.";
             return null;
         }
-    
+
         try {
             netzService.bergungUebernehmen(
                     ausgewaehltesNetz.getId(),
                     userContext.getPersonId(),
-                    ausgewaehltesNetz.getVersion()
-            );
-    
+                    ausgewaehltesNetz.getVersion());
+
             // Zur Übersicht zurück: Dort werden die Daten neu geladen.
             return "netzuebersicht.xhtml?faces-redirect=true";
-    
+
         } catch (IllegalArgumentException | IllegalStateException fehler) {
             fehlermeldung = fehler.getMessage();
             return null;
-    
+
         } catch (jakarta.persistence.PersistenceException fehler) {
-            fehlermeldung =
-                    "Die Bergung konnte nicht übernommen werden. "
+            fehlermeldung = "Die Bergung konnte nicht übernommen werden. "
                     + "Bitte lade die Übersicht erneut.";
             return null;
         }
@@ -140,33 +135,31 @@ public class NetzBearbeitungBean implements Serializable {
     public String alsGeborgenMelden() {
         fehlermeldung = null;
         hinweismeldung = null;
-    
+
         if (ausgewaehltesNetz == null) {
             fehlermeldung = "Es ist kein Netz ausgewählt.";
             return null;
         }
-    
+
         if (userContext.isAnonym()) {
             fehlermeldung = "Bitte zuerst eine Person auswählen.";
             return null;
         }
-    
+
         try {
             netzService.alsGeborgenMelden(
                     ausgewaehltesNetz.getId(),
                     userContext.getPersonId(),
-                    ausgewaehltesNetz.getVersion()
-            );
-    
+                    ausgewaehltesNetz.getVersion());
+
             return "netzuebersicht.xhtml?faces-redirect=true";
-    
+
         } catch (IllegalArgumentException | IllegalStateException fehler) {
             fehlermeldung = fehler.getMessage();
             return null;
-    
+
         } catch (jakarta.persistence.PersistenceException fehler) {
-            fehlermeldung =
-                    "Das Netz konnte nicht als geborgen gemeldet werden. "
+            fehlermeldung = "Das Netz konnte nicht als geborgen gemeldet werden. "
                     + "Bitte öffne die Übersicht erneut.";
             return null;
         }
@@ -175,28 +168,27 @@ public class NetzBearbeitungBean implements Serializable {
     public String alsVerschollenMelden() {
         fehlermeldung = null;
         hinweismeldung = null;
-    
+
         if (ausgewaehltesNetz == null) {
             fehlermeldung = "Es ist kein Netz ausgewählt.";
             return null;
         }
-    
+
         try {
             netzService.alsVerschollenMelden(
                     ausgewaehltesNetz.getId(),
-                    ausgewaehltesNetz.getVersion()
-            );
-    
+                    userContext.getPersonId(),
+                    ausgewaehltesNetz.getVersion());
+
             // Die Übersicht lädt den aktualisierten Status.
             return "netzuebersicht.xhtml?faces-redirect=true";
-    
+
         } catch (IllegalArgumentException | IllegalStateException fehler) {
             fehlermeldung = fehler.getMessage();
             return null;
-    
+
         } catch (jakarta.persistence.PersistenceException fehler) {
-            fehlermeldung =
-                    "Das Netz konnte nicht als verschollen gemeldet werden. "
+            fehlermeldung = "Das Netz konnte nicht als verschollen gemeldet werden. "
                     + "Bitte öffne die Übersicht erneut.";
             return null;
         }

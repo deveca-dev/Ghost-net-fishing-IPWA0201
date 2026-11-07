@@ -5,7 +5,7 @@ Bei Fragen kannst du dich ein Issue eröffnen.
 ## Verwendete Technologien
 - Jakarta Faces (JSF)
 - CDI mit Weld
-- JPa mit Hibernate
+- JPA mit Hibernate
 - PostgreSQL 18
 - Apache Tomcat
 - Docker Composer für die Datenbank
@@ -15,11 +15,6 @@ Bei Fragen kannst du dich ein Issue eröffnen.
 - Maven
 - Apache Tomcat 11
 - Docker und Docker Compose
-
-# Info
-Die Anwendung wurde erstellt auf folgendem System:
-- MacOS GoldenGate
-- Java Version 8 Update 511 (Build 1.8.0_511-b33)
 
 ---
 
@@ -73,7 +68,16 @@ mvn -f POM.XML clean package
 ```
 Die erzeugte WAR-Datei liegt anschließend im Verzeichnis target.
 
-## Anwendung mit Tomcat starten
+## Projekt und Anwendung in Eclipse einrichten
+Eine Detailierte Anleitung zum Betrieb mit Eclipse findest du hier: [Eclipse Setup](./docs/EclipseSetup.md)
+Allgemeines Vorgehen:
+1. Eclipse herunterladen und installieren
+2. Projekt importieren
+3. Projekt öffnen
+4. Tomcat Server ggf. vorab herunterladen und in Eclipse importieren
+5. Anwendung mit Tomcat starten
+
+## Anwendung mit Tomcat starten (MacOS GoldenGate)
 
 Vor dem Start von Tomcat müssen die Datenbankvariablen gesetzt werden:
 ```env
